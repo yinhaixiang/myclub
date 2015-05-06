@@ -9,21 +9,37 @@ exports.login = function (req, res) {
 };
 exports.doLogin = function (req, res) {
   var user = {
-    username: 'admin',
-    password: 'admin'
+    username: 'aa',
+    password: 'bb'
   }
   if (req.body.username === user.username && req.body.password === user.password) {
-    res.redirect('/home');
+    req.session.user = user;
+    return res.redirect('/home');
+  } else {
+    req.session.error = '用户名或密码不正确';
+    return res.redirect('/login');
   }
-  res.redirect('/login');
 };
 exports.logout = function (req, res) {
+  req.session.user = null;
   res.redirect('/');
 };
 exports.home = function (req, res) {
-  var user = {
-    username: 'admin',
-    password: 'admin'
-  }
-  res.render('home', {title: 'Home', user: user});
+  res.render('home', {title: 'Home'});
 };
+
+exports.authentication = function (req, res, next) {
+  if (!req.session.user) {
+    req.session.error='请先登陆';
+    return res.redirect('/login');
+  }
+  next();
+}
+
+exports.notAuthentication = function (req, res, next) {
+  if (req.session.user) {
+    req.session.error='已登陆';
+    return res.redirect('/home');
+  }
+  next();
+}

@@ -24,12 +24,24 @@ app.use(session({
   saveUninitialized: true
 }));
 
+app.use(function (req, res, next) {
+  res.locals.user = req.session.user;
+  var err = req.session.error;
+  delete req.session.error;
+  res.locals.message = '';
+  if (err) res.locals.message = '<div class="alert alert-error">' + err + '</div>';
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', routes.index);
+app.all('/login', routes.notAuthentication);
 app.get('/login', routes.login);
 app.post('/login', routes.doLogin);
+app.get('/logout', routes.authentication);
 app.get('/logout', routes.logout);
+app.get('/home', routes.authentication);
 app.get('/home', routes.home);
 
 // catch 404 and forward to error handler
