@@ -1,7 +1,7 @@
 module.exports = {
-  '/login': {
-    username: {isRequired: true},
-    password: {isRequired: true}
+  '/dologin': {
+    username: {isRequired: false},
+    password: {isRequired: false}
   }
 };
 

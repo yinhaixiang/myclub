@@ -4,6 +4,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var sessionstore = require('sessionstore');
+var validator = require('express-validator2');
+var validator_config = require('./validator_config');
+validator.setConfig(validator_config);
 
 var routes = require('./routes/index');
 
@@ -24,6 +27,8 @@ app.use(session({
   saveUninitialized: true
 }));
 
+app.use(validator.validate);
+
 app.use(function (req, res, next) {
   res.locals.user = req.session.user;
   var err = req.session.error;
@@ -36,9 +41,9 @@ app.use(function (req, res, next) {
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', routes.index);
-app.all('/login', routes.notAuthentication);
+//app.all('/login', routes.notAuthentication);
 app.get('/login', routes.login);
-app.post('/login', routes.doLogin);
+app.post('/dologin', routes.doLogin);
 app.get('/logout', routes.authentication);
 app.get('/logout', routes.logout);
 app.get('/home', routes.authentication);
